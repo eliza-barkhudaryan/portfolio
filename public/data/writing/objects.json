@@ -1,0 +1,26 @@
+[
+    {
+        "name": "EVN Report Publications",
+        "description": "Articles and essays published in EVN Report, covering Armenian culture, society, and contemporary issues.",
+        "url": "https://evnreport.com/author/eliza-barkhudaryan/",
+        "linkLabel": "Read [EN]"
+    },
+    {
+        "name": "The Highlander Magazine",
+        "description": "Student journalism at AUA's The Highlander, featuring creative writing, student life coverage, and personal essays including \"Dark Chocolate: How I Fed Myself A Story\" and more.",
+        "url": "https://thehighlander.aua.am/author/eliza-barkhudaryan/",
+        "linkLabel": "Read [EN]"
+    },
+    {
+        "name": "Hetq Media Factory",
+        "description": "Multimedia journalism projects in Armenian, including photo stories and long-form investigative pieces exploring social issues in Armenia.",
+        "url": "https://mediafactory.am/who-we-are/eliza-barkhudaryan",
+        "linkLabel": "Read [AM]"
+    },
+    {
+        "name": "Coverage Magazine",
+        "description": "Photographer and Reporter for Coverage Magazine. A collection of visual and written stories capturing moments and narratives.",
+        "url": "./coverage.html",
+        "linkLabel": "Read [EN]"
+    }
+]
