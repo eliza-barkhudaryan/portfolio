@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coverage Magazine — Eliza Barkhudaryan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --ink-black: #2d3a2a;
+            --ink-dark: #3d4a3a;
+            --ink-medium: #5a6b57;
+            --ink-light: #8a9a87;
+            --ink-lighter: #b5c4b2;
+            --paper-cream: #f7f9f5;
+            --paper-white: #ffffff;
+            --paper-aged: #eef2eb;
+            --shadow-soft: rgba(45, 58, 42, 0.08);
+            --shadow-medium: rgba(45, 58, 42, 0.12);
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'EB Garamond', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--paper-cream);
+            color: var(--ink-dark);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 3rem;
+            background: var(--paper-white);
+            min-height: 100%;
+            box-shadow: 0 0 60px var(--shadow-soft);
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 600;
+            color: var(--ink-black);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            font-family: var(--font-body);
+            font-size: 1.05rem;
+            font-style: italic;
+            color: var(--ink-medium);
+            margin-bottom: 1.5rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--paper-white);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.75rem 1.5rem;
+            background: var(--ink-dark);
+            border-radius: 50px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 1rem;
+        }
+
+        .back-link:hover {
+            background: var(--ink-black);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-medium);
+        }
+
+        .content-card {
+            background: var(--paper-white);
+            border: 1px solid var(--ink-lighter);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px var(--shadow-soft);
+            margin-bottom: 2rem;
+        }
+
+        .pdf-wrapper {
+            width: 100%;
+            height: calc(100vh - 280px);
+            min-height: 600px;
+        }
+
+        .pdf-embed {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .download-section {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--paper-aged);
+            border-top: 1px solid var(--ink-lighter);
+        }
+
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--ink-dark);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--ink-lighter);
+            border-radius: 50px;
+            transition: all 0.2s ease;
+        }
+
+        .download-link:hover {
+            background: var(--ink-dark);
+            color: var(--paper-white);
+            border-color: var(--ink-dark);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .footer-text {
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--ink-light);
+            letter-spacing: 0.1em;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                padding: 1rem;
+            }
+
+            .pdf-wrapper {
+                height: calc(100vh - 320px);
+                min-height: 400px;
+            }
+
+            .page-header {
+                padding: 2rem 0 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+        <header class="page-header">
+            <h1 class="page-title">Coverage Magazine</h1>
+            <p class="page-subtitle">Photographer & Reporter</p>
+            <a href="./index.html#writing" class="back-link">← Back to Portfolio</a>
+        </header>
+
+        <div class="content-card">
+            <div class="pdf-wrapper">
+                <iframe class="pdf-embed" src="./data/writing/EC130BMagazineActivity.pdf"
+                    title="Coverage Magazine"></iframe>
+            </div>
+            <div class="download-section">
+                <a href="./data/writing/EC130BMagazineActivity.pdf" download class="download-link">
+                    ↓ Download PDF
+                </a>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p class="footer-text">© 2025 Eliza Barkhudaryan</p>
+        </footer>
+    </div>
+</body>
+
+</html>
