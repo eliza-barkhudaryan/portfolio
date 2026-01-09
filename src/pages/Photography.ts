@@ -2,6 +2,19 @@ import { WorkCard } from '../components/WorkCard';
 import { PhotoSlider } from '../components/PhotoSlider';
 import type { PhotographyItem } from '../types';
 
+function isUrl(path: string): boolean {
+  try {
+    new URL(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function getPhotoPath(path: string): string {
+  return isUrl(path) ? path : `./data/photography/${path}`;
+}
+
 export async function renderPhotographyPage(container: HTMLElement): Promise<void> {
   try {
     const response = await fetch('./data/photography/objects.json');
@@ -11,11 +24,11 @@ export async function renderPhotographyPage(container: HTMLElement): Promise<voi
 
     const pageHeader = document.createElement('div');
     pageHeader.className = 'page-header';
-    
+
     const title = document.createElement('h2');
     title.className = 'page-title';
     title.textContent = 'Photography';
-    
+
     const subtitle = document.createElement('p');
     subtitle.className = 'page-subtitle';
     subtitle.textContent = 'Visual Stories Through the Lens';
@@ -31,9 +44,9 @@ export async function renderPhotographyPage(container: HTMLElement): Promise<voi
       // Add full path prefix to each photo object
       const photosWithPaths = item.photo_objects.map((photo) => ({
         ...photo,
-        path: `./data/photography/${photo.path}`,
+        path: getPhotoPath(photo.path),
       }));
-      
+
       const photoSlider = PhotoSlider({
         photos: photosWithPaths,
         seriesTitle: item.name,

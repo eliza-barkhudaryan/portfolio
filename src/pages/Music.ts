@@ -8,6 +8,19 @@ function isVideoFile(path: string): boolean {
     return lowerPath.endsWith('.mp4') || lowerPath.endsWith('.webm') || lowerPath.endsWith('.mov');
 }
 
+function isUrl(path: string): boolean {
+    try {
+        new URL(path);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+function getMediaSrc(path: string): string {
+    return isUrl(path) ? path : `./data/music/${path}`;
+}
+
 export async function renderMusicPage(container: HTMLElement): Promise<void> {
     try {
         const response = await fetch('./data/music/objects.json');
@@ -44,14 +57,15 @@ export async function renderMusicPage(container: HTMLElement): Promise<void> {
 
         sortedItems.forEach((item) => {
             const isVideo = isVideoFile(item.path);
+            const mediaSrc = getMediaSrc(item.path);
 
             const mediaElement = isVideo
                 ? VideoPlayer({
-                    src: `./data/music/${item.path}`,
+                    src: mediaSrc,
                     title: item.name,
                 })
                 : SongPlayer({
-                    src: `./data/music/${item.path}`,
+                    src: mediaSrc,
                     title: item.name,
                 });
 
