@@ -3,5 +3,10 @@
     "name": "Zen - Lost Soul",
     "description": "Zen is an Alternative Rock band that originated in Yerevan, Armenia. The members of the band are: Eliza Barkhudaryan(Vocals and Violin), Hrach Amirkhanyan(Drums), Ani Ulbricht(Bass Guitar), David Hovhannisyan(Guitar). The songLost Soul is written and composed by Eliza Barkhudaryan.",
     "path": "zen_lost_soul.mp3"
+  },
+  {
+    "name": "Meghrie - The Promise",
+    "description": "Short film directed and produced by Meghrie, streamed from remote storage. Soundtrack by Eliza Barkhudaryan.",
+    "path": "https://pub-325b273c5e694c6daa58c28de3b1482a.r2.dev/the_promise_Meghrie.mov"
   }
 ]
