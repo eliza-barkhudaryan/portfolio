@@ -310,6 +310,7 @@ body {
     color: var(--ink-medium);
     margin-bottom: var(--space-lg);
     flex: 1;
+    white-space: pre-line;
 }
 
 .work-card__media {
