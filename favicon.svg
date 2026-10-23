@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Deep purple/black rounded square container background -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#140b24" />
+      <stop offset="70%" stop-color="#090512" />
+      <stop offset="100%" stop-color="#040208" />
+    </radialGradient>
+
+    <!-- Bright glowing moon gradient -->
+    <radialGradient id="moonGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="75%" stop-color="#ebdfff" />
+      <stop offset="100%" stop-color="#cca8ff" />
+    </radialGradient>
+
+    <!-- Deep purple-black moth body fill -->
+    <linearGradient id="mothDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c112b" />
+      <stop offset="100%" stop-color="#08040d" />
+    </linearGradient>
+
+    <!-- Glowing purple rim stroke for moth outline -->
+    <linearGradient id="neonRim" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#cb9eff" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+
+    <!-- Soft glow filter for the moon -->
+    <filter id="moonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Feathered antenna definition (Right side) -->
+    <g id="antenna-branch">
+      <path d="M 0,0 C 12,-18 25,-32 45,-48 C 42,-42 35,-30 22,-16 Z" fill="#08040d" />
+      <!-- Feathers -->
+      <line x1="5" y1="-6" x2="16" y2="-12" stroke="#08040d" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="10" y1="-12" x2="23" y2="-18" stroke="#08040d" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="16" y1="-18" x2="30" y2="-24" stroke="#08040d" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="22" y1="-25" x2="36" y2="-30" stroke="#08040d" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="28" y1="-32" x2="40" y2="-36" stroke="#08040d" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="33" y1="-38" x2="43" y2="-41" stroke="#08040d" stroke-width="2" stroke-linecap="round" />
+    </g>
+  </defs>
+
+  <!-- Base Icon Frame -->
+
+  <!-- Full Glowing Moon -->
+  <circle cx="256" cy="256" r="192" fill="url(#moonGrad)" filter="url(#moonGlow)" />
+
+  <!-- MOTH GROUP -->
+  <g id="moth" transform="translate(0 -28)">
+
+    <!-- Glowing Purple Neon Border / Rim Underlayer -->
+    <g stroke="url(#neonRim)" stroke-width="12" stroke-linejoin="round" stroke-linecap="round" fill="none">
+      <!-- Outer Wing Silhouette Boundary -->
+   
+      <!-- Feathered Antenna Outer Glow -->
+    </g>
+
+    <!-- Main Moth Silhouette Fill -->
+    <g fill="url(#mothDark)">
+      <!-- Left Forewing & Hindwing combined -->
+      <path d="
+        M 256,215
+        C 220,210 140,235 55,288
+        C 42,296 46,320 72,338
+        C 98,355 130,352 152,338
+        C 172,325 190,345 200,360
+        C 215,380 235,370 248,320
+        C 252,280 254,235 256,215 Z" />
+
+      <!-- Right Forewing & Hindwing combined -->
+      <path d="
+        M 256,215
+        C 292,210 372,235 457,288
+        C 470,296 466,320 440,338
+        C 414,355 382,352 360,338
+        C 340,325 322,345 312,360
+        C 297,380 277,370 264,320
+        C 260,280 258,235 256,215 Z" />
+
+      <!-- Fuzzy Body & Abdomen -->
+      <path d="
+        M 256,190
+        C 242,190 234,202 234,216
+        C 234,226 238,234 230,244
+        C 222,254 226,275 232,295
+        C 238,315 244,340 256,380
+        C 268,340 274,315 280,295
+        C 286,275 290,254 282,244
+        C 274,234 278,226 278,216
+        C 278,202 270,190 256,190 Z" />
+    </g>
+
+    <!-- Feathered Antennae -->
+    <g transform="translate(256, 192)">
+      <!-- Right Antenna -->
+      <use href="#antenna-branch" />
+      <!-- Left Antenna (Flipped) -->
+      <use href="#antenna-branch" transform="scale(-1, 1)" />
+    </g>
+
+    <!-- Light-Colored Wing Cutouts & Details (Moon Color Passing Through) -->
+    <g fill="#ebdfff">
+      <!-- Left Wing Main Eyespot & Accents -->
+      <circle cx="138" cy="298" r="14" />
+      <circle cx="168" cy="272" r="7" />
+      <ellipse cx="110" cy="324" rx="4" ry="10" transform="rotate(-30 110 324)" />
+      <ellipse cx="124" cy="331" rx="4" ry="9" transform="rotate(-25 124 331)" />
+      <ellipse cx="139" cy="335" rx="4" ry="8" transform="rotate(-20 139 335)" />
+
+      <!-- Left Wing Vein Cutouts -->
+      <path d="M 230,225 L 125,265 L 128,268 L 231,229 Z" />
+      <path d="M 232,238 L 160,288 L 162,291 L 233,241 Z" />
+
+      <!-- Right Wing Main Eyespot & Accents -->
+      <circle cx="374" cy="298" r="14" />
+      <circle cx="344" cy="272" r="7" />
+      <ellipse cx="402" cy="324" rx="4" ry="10" transform="rotate(30 402 324)" />
+      <ellipse cx="388" cy="331" rx="4" ry="9" transform="rotate(25 388 331)" />
+      <ellipse cx="373" cy="335" rx="4" ry="8" transform="rotate(20 373 335)" />
+
+      <!-- Right Wing Vein Cutouts -->
+      <path d="M 282,225 L 387,265 L 384,268 L 281,229 Z" />
+      <path d="M 280,238 L 352,288 L 350,291 L 279,241 Z" />
+
+      <!-- Hindwing Spots -->
+      <circle cx="205" cy="352" r="5" />
+      <circle cx="307" cy="352" r="5" />
+
+      <!-- Fluffy Head Arch & Collar Highlight -->
+      <path d="M 240,205 C 248,198 264,198 272,205 C 264,208 248,208 240,205 Z" />
+    </g>
+
+    <!-- Body Texture Fluff Lines -->
+    <g stroke="#ebdfff" stroke-width="2" stroke-linecap="round" opacity="0.8">
+      <path d="M 244,230 Q 256,236 268,230" />
+      <path d="M 242,250 Q 256,258 270,250" />
+      <path d="M 244,270 Q 256,278 268,270" />
+      <path d="M 248,290 Q 256,296 264,290" />
+      <path d="M 250,310 Q 256,315 262,310" />
+    </g>
+
+  </g>
+</svg>
