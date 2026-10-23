@@ -264,7 +264,6 @@ export function Door({ content, kind, label, light = true }: DoorProps): HTMLEle
         const target = event.target;
         if (!(target instanceof Node)) return;
         if (root.contains(target)) return;
-        if (popup?.overlay.contains(target)) return;
         setOpen(false);
     });
 
