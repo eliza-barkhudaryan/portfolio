@@ -1,3 +1,4 @@
+import { storageUrl } from '../storage';
 import { WorkCard } from '../components/WorkCard';
 import { SongPlayer } from '../components/SongPlayer';
 import { VideoPlayer } from '../components/VideoPlayer';
@@ -23,28 +24,13 @@ function getMediaSrc(path: string): string {
 
 export async function renderMusicPage(container: HTMLElement): Promise<void> {
     try {
-        const response = await fetch('./data/music/objects.json');
+        const response = await fetch(storageUrl('music/objects.json'));
         const items: MusicItem[] = await response.json();
 
         container.innerHTML = '';
 
-        const pageHeader = document.createElement('div');
-        pageHeader.className = 'page-header';
-
-        const title = document.createElement('h2');
-        title.className = 'page-title';
-        title.textContent = 'Music';
-
-        const subtitle = document.createElement('p');
-        subtitle.className = 'page-subtitle';
-        subtitle.textContent = 'A Collection of Original Compositions';
-
-        pageHeader.appendChild(title);
-        pageHeader.appendChild(subtitle);
-        container.appendChild(pageHeader);
-
         const grid = document.createElement('div');
-        grid.className = 'work-grid';
+        grid.className = 'work-grid work-grid--scroll';
 
         // Sort items: audio first, video last
         const sortedItems = [...items].sort((a, b) => {

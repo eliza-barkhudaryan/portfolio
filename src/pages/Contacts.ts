@@ -5,21 +5,6 @@ const LINKEDIN_URL = 'https://www.linkedin.com/in/eliza-barkhudaryan/';
 export async function renderContactsPage(container: HTMLElement): Promise<void> {
   container.innerHTML = '';
 
-  const pageHeader = document.createElement('div');
-  pageHeader.className = 'page-header';
-
-  const title = document.createElement('h2');
-  title.className = 'page-title';
-  title.textContent = 'Contacts';
-
-  const subtitle = document.createElement('p');
-  subtitle.className = 'page-subtitle';
-  subtitle.textContent = 'Get in Touch';
-
-  pageHeader.appendChild(title);
-  pageHeader.appendChild(subtitle);
-  container.appendChild(pageHeader);
-
   const contactCard = document.createElement('div');
   contactCard.className = 'contact-card';
 

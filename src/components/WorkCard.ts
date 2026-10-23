@@ -4,9 +4,31 @@ export interface WorkCardProps {
     mediaElement: HTMLElement;
 }
 
+const inViewObserver =
+    typeof IntersectionObserver !== 'undefined'
+        ? new IntersectionObserver(
+              (entries) => {
+                  entries.forEach((entry) => {
+                      entry.target.classList.toggle(
+                          'is-in-view',
+                          entry.isIntersecting && entry.intersectionRatio >= 0.45
+                      );
+                  });
+              },
+              { threshold: [0.25, 0.45, 0.7] }
+          )
+        : null;
+
 export function WorkCard({ name, description, mediaElement }: WorkCardProps): HTMLElement {
     const card = document.createElement('article');
     card.className = 'work-card';
+
+    const play = document.createElement('div');
+    play.className = 'work-card__play';
+    play.appendChild(mediaElement);
+
+    const copy = document.createElement('div');
+    copy.className = 'work-card__copy';
 
     const header = document.createElement('header');
     header.className = 'work-card__header';
@@ -15,25 +37,19 @@ export function WorkCard({ name, description, mediaElement }: WorkCardProps): HT
     title.className = 'work-card__title';
     title.textContent = name;
 
-    const ornament = document.createElement('span');
-    ornament.className = 'work-card__ornament';
-    ornament.textContent = '§';
-
     header.appendChild(title);
-    header.appendChild(ornament);
 
     const descriptionEl = document.createElement('p');
     descriptionEl.className = 'work-card__description';
     descriptionEl.textContent = description;
 
-    const mediaContainer = document.createElement('div');
-    mediaContainer.className = 'work-card__media';
-    mediaContainer.appendChild(mediaElement);
+    copy.appendChild(header);
+    copy.appendChild(descriptionEl);
 
-    card.appendChild(header);
-    card.appendChild(descriptionEl);
-    card.appendChild(mediaContainer);
+    card.appendChild(play);
+    card.appendChild(copy);
+
+    inViewObserver?.observe(card);
 
     return card;
 }
-

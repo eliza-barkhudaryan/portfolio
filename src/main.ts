@@ -7,14 +7,15 @@ import './style.css';
 
 type PageType = 'music' | 'photography' | 'writing' | 'contacts';
 
-const pages: { id: PageType; label: string }[] = [
-    { id: 'music', label: 'Music' },
-    { id: 'photography', label: 'Photography' },
-    { id: 'writing', label: 'Writing' },
-    { id: 'contacts', label: 'Contacts' },
+const pages: { id: PageType; label: string; hint: string }[] = [
+    { id: 'music', label: 'Music', hint: 'A Collection of Original Compositions' },
+    { id: 'photography', label: 'Photography', hint: 'Visual Stories Through the Lens' },
+    { id: 'writing', label: 'Writing', hint: 'Articles, Essays, and Stories' },
+    { id: 'contacts', label: 'Contacts', hint: 'Get in Touch' },
 ];
 
 let currentPage: PageType = 'music';
+let dismissedHint: PageType | null = null;
 
 function renderNavigation(): void {
     const navContainer = document.getElementById('nav-buttons');
@@ -25,8 +26,19 @@ function renderNavigation(): void {
     pages.forEach((page) => {
         const button = Button({
             label: page.label,
+            hint: page.hint,
             isActive: currentPage === page.id,
-            onClick: () => navigateTo(page.id),
+            flame: page.id === 'contacts',
+            hintDismissed: dismissedHint === page.id,
+            onClick: () => {
+                dismissedHint = page.id;
+                navigateTo(page.id);
+            },
+            onMouseLeave: () => {
+                if (dismissedHint === page.id) {
+                    dismissedHint = null;
+                }
+            },
         });
         navContainer.appendChild(button);
     });
