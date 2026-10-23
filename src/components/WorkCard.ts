@@ -1,7 +1,16 @@
+import { Door, type DoorKind } from './Door';
+
 export interface WorkCardProps {
     name: string;
     description: string;
     mediaElement: HTMLElement;
+}
+
+function doorKind(media: HTMLElement): DoorKind {
+    if (media.classList.contains('song-player')) return 'music';
+    if (media.classList.contains('video-player')) return 'video';
+    if (media.classList.contains('photo-slider')) return 'photos';
+    return 'writing';
 }
 
 const inViewObserver =
@@ -25,7 +34,13 @@ export function WorkCard({ name, description, mediaElement }: WorkCardProps): HT
 
     const play = document.createElement('div');
     play.className = 'work-card__play';
-    play.appendChild(mediaElement);
+    play.appendChild(
+        Door({
+            content: mediaElement,
+            kind: doorKind(mediaElement),
+            label: name,
+        })
+    );
 
     const copy = document.createElement('div');
     copy.className = 'work-card__copy';

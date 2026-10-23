@@ -1,5 +1,18 @@
 import type { PhotoObject } from '../types';
 
+function arrowMark(direction: 'prev' | 'next'): SVGSVGElement {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 12 20');
+  svg.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', direction === 'prev' ? 'M9 2 L3 10 L9 18' : 'M3 2 L9 10 L3 18');
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', 'currentColor');
+  path.setAttribute('stroke-width', '1.2');
+  svg.appendChild(path);
+  return svg;
+}
+
 export interface PhotoSliderProps {
   photos: PhotoObject[];
   seriesTitle: string;
@@ -16,6 +29,7 @@ export function PhotoSlider({ photos, seriesTitle }: PhotoSliderProps): HTMLElem
 
   const img = document.createElement('img');
   img.className = 'photo-slider__image';
+  img.fetchPriority = 'high';
   img.src = photos[0]?.path || '';
   img.alt = photos[0]?.name || seriesTitle;
   imageContainer.appendChild(img);
@@ -47,7 +61,7 @@ export function PhotoSlider({ photos, seriesTitle }: PhotoSliderProps): HTMLElem
     }
     
     // Show/hide caption container based on content
-    captionContainer.style.display = (photo.name || photo.description) ? 'block' : 'none';
+    captionContainer.hidden = !(photo.name || photo.description);
   }
 
   // Initialize caption
@@ -58,7 +72,7 @@ export function PhotoSlider({ photos, seriesTitle }: PhotoSliderProps): HTMLElem
 
   const prevButton = document.createElement('button');
   prevButton.className = 'photo-slider__button photo-slider__button--prev';
-  prevButton.innerHTML = '◀';
+  prevButton.appendChild(arrowMark('prev'));
   prevButton.setAttribute('aria-label', 'Previous image');
 
   const indicator = document.createElement('span');
@@ -67,7 +81,7 @@ export function PhotoSlider({ photos, seriesTitle }: PhotoSliderProps): HTMLElem
 
   const nextButton = document.createElement('button');
   nextButton.className = 'photo-slider__button photo-slider__button--next';
-  nextButton.innerHTML = '▶';
+  nextButton.appendChild(arrowMark('next'));
   nextButton.setAttribute('aria-label', 'Next image');
 
   function updateSlider(): void {
@@ -78,14 +92,22 @@ export function PhotoSlider({ photos, seriesTitle }: PhotoSliderProps): HTMLElem
     indicator.textContent = `${currentIndex + 1} / ${photos.length}`;
   }
 
-  prevButton.addEventListener('click', () => {
-    currentIndex = currentIndex === 0 ? photos.length - 1 : currentIndex - 1;
+  function step(delta: number): void {
+    if (photos.length <= 1) return;
+    currentIndex = (currentIndex + delta + photos.length) % photos.length;
     updateSlider();
-  });
+  }
 
-  nextButton.addEventListener('click', () => {
-    currentIndex = currentIndex === photos.length - 1 ? 0 : currentIndex + 1;
-    updateSlider();
+  prevButton.addEventListener('click', () => step(-1));
+  nextButton.addEventListener('click', () => step(1));
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const showing = container.closest('.media-popup, .door.is-open');
+    if (!showing || photos.length <= 1) return;
+    event.preventDefault();
+    step(event.key === 'ArrowRight' ? 1 : -1);
   });
 
   // Hide controls if only one image

@@ -70,6 +70,22 @@ export function SongPlayer({ src, title }: SongPlayerProps): HTMLElement {
         audio.currentTime = percent * audio.duration;
     });
 
+    function setPlaying(next: boolean): void {
+        isPlaying = next;
+        playButton.innerHTML = next ? '❚❚' : '▶';
+        playButton.classList.toggle('song-player__button--playing', next);
+    }
+
+    container.addEventListener('door-toggle', ((event: Event) => {
+        const open = (event as CustomEvent<{ open: boolean }>).detail.open;
+        if (open) {
+            audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+        } else {
+            audio.pause();
+            setPlaying(false);
+        }
+    }) as EventListener);
+
     container.appendChild(playButton);
     container.appendChild(progressContainer);
     container.appendChild(timeDisplay);

@@ -14,6 +14,15 @@ export function VideoPlayer({ src, title }: VideoPlayerProps): HTMLElement {
     video.preload = 'metadata';
     video.setAttribute('aria-label', title);
 
+    container.addEventListener('door-toggle', ((event: Event) => {
+        const open = (event as CustomEvent<{ open: boolean }>).detail.open;
+        if (open) {
+            video.play().catch(() => undefined);
+        } else {
+            video.pause();
+        }
+    }) as EventListener);
+
     container.appendChild(video);
 
     return container;
