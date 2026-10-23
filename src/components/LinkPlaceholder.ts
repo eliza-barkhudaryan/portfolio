@@ -23,7 +23,7 @@ export function LinkPlaceholder({ url, label }: LinkPlaceholderProps): HTMLEleme
 
     const arrow = document.createElement('span');
     arrow.className = 'link-placeholder__arrow';
-    arrow.innerHTML = '→';
+    arrow.innerHTML = '▶';
 
     link.appendChild(icon);
     link.appendChild(text);
