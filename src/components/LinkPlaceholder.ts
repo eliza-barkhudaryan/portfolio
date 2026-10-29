@@ -1,35 +1,49 @@
 export interface LinkPlaceholderProps {
     url: string;
     label?: string;
+    name: string;
 }
 
-export function LinkPlaceholder({ url, label }: LinkPlaceholderProps): HTMLElement {
-    const container = document.createElement('div');
-    container.className = 'link-placeholder';
+function readingCopy(label: string | undefined, url: string): { kicker: string; detail: string } {
+    const raw = (label || '').trim();
+    const language = /\[AM\]/i.test(raw) ? 'Armenian' : /\[EN\]/i.test(raw) ? 'English' : '';
+    const kicker = language ? `Read in ${language}` : raw || 'Read';
+    const isPdf = /\.pdf(?:$|\?)/i.test(url);
+
+    let detail = isPdf ? 'PDF' : '';
+    if (!isPdf) {
+        try {
+            detail = new URL(url).hostname.replace(/^www\./, '');
+        } catch {
+            detail = '';
+        }
+    }
+
+    return { kicker, detail };
+}
+
+export function LinkPlaceholder({ url, label, name }: LinkPlaceholderProps): HTMLAnchorElement {
+    const { kicker, detail } = readingCopy(label, url);
 
     const link = document.createElement('a');
-    link.className = 'link-placeholder__link';
+    link.className = 'essay__link';
     link.href = url;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
+    link.setAttribute('aria-label', detail === 'PDF' ? `${kicker}, PDF: ${name}` : `${kicker}: ${name}`);
 
-    const icon = document.createElement('span');
-    icon.className = 'link-placeholder__icon';
-    icon.innerHTML = '☞';
+    const kickerEl = document.createElement('span');
+    kickerEl.className = 'essay__link-name';
+    kickerEl.textContent = kicker;
 
-    const text = document.createElement('span');
-    text.className = 'link-placeholder__text';
-    text.textContent = label || 'Read More';
+    link.appendChild(kickerEl);
 
-    const arrow = document.createElement('span');
-    arrow.className = 'link-placeholder__arrow';
-    arrow.innerHTML = '▶';
+    if (detail) {
+        const detailEl = document.createElement('span');
+        detailEl.className = 'essay__link-detail';
+        detailEl.textContent = detail;
+        link.appendChild(detailEl);
+    }
 
-    link.appendChild(icon);
-    link.appendChild(text);
-    link.appendChild(arrow);
-    container.appendChild(link);
-
-    return container;
+    return link;
 }
-

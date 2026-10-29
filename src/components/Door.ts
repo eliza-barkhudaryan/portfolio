@@ -9,6 +9,10 @@ export interface DoorProps {
 
 const openDoors = new Set<HTMLElement>();
 
+function reduceMotion(): boolean {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function closeMark(): SVGSVGElement {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 16 16');
@@ -26,79 +30,161 @@ function popsOut(kind: DoorKind): boolean {
     return kind === 'photos' || kind === 'video';
 }
 
-function ensureArchClip(): void {
-    if (document.getElementById('door-arch-clip')) return;
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '0');
-    svg.setAttribute('height', '0');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.style.position = 'absolute';
-    svg.innerHTML = `
-      <defs>
-        <clipPath id="door-arch-clip" clipPathUnits="objectBoundingBox">
-          <path d="M0,1 L0,0.36 C0,0.18 0.22,0.05 0.5,0 C0.78,0.05 1,0.18 1,0.36 L1,1 Z" />
-        </clipPath>
-      </defs>`;
-    document.body.appendChild(svg);
+export function Door({ content, kind, label }: DoorProps): HTMLElement {
+    if (kind === 'writing' || kind === 'contact') {
+        const plate = document.createElement('div');
+        plate.className = 'read-plate';
+        plate.appendChild(content);
+        return plate;
+    }
+
+    if (kind === 'music') return mountTurntable(content, label);
+    return mountStage(content, kind, label);
 }
 
-function panel(side: 'left' | 'right'): HTMLElement {
-    const door = document.createElement('div');
-    door.className = `door__panel door__panel--${side}`;
-    door.innerHTML = `
-      <span class="door__tracery" aria-hidden="true"></span>
-      <span class="door__handle" aria-hidden="true"></span>`;
-    return door;
-}
-
-export function Door({ content, kind, label, light = true }: DoorProps): HTMLElement {
-    ensureArchClip();
-
+function mountTurntable(content: HTMLElement, label: string): HTMLElement {
     const root = document.createElement('div');
-    root.className = `door door--${kind}${light ? ' door--lit' : ''}`;
+    root.className = 'turntable';
 
-    const stage = document.createElement('div');
-    stage.className = 'door__stage';
+    const well = document.createElement('div');
+    well.className = 'turntable__well';
+
+    const disc = document.createElement('div');
+    disc.className = 'turntable__disc';
+    disc.setAttribute('aria-hidden', 'true');
+
+    const labelEl = document.createElement('div');
+    labelEl.className = 'turntable__label';
+    const labelText = document.createElement('span');
+    labelText.textContent = label;
+    labelEl.appendChild(labelText);
+
+    const spindle = document.createElement('div');
+    spindle.className = 'turntable__spindle';
+
+    disc.append(labelEl, spindle);
+
+    const sheen = document.createElement('div');
+    sheen.className = 'turntable__sheen';
+    sheen.setAttribute('aria-hidden', 'true');
+
+    const arm = document.createElement('div');
+    arm.className = 'turntable__arm';
+    arm.setAttribute('aria-hidden', 'true');
+    arm.innerHTML = `
+      <span class="turntable__arm-head"></span>
+      <span class="turntable__arm-beam"></span>
+      <span class="turntable__arm-pivot"></span>`;
+
+    const hit = document.createElement('button');
+    hit.type = 'button';
+    hit.className = 'turntable__hit';
+    hit.setAttribute('aria-label', `Play ${label}`);
+
+    const readout = document.createElement('div');
+    readout.className = 'turntable__readout';
+    readout.appendChild(content);
+
+    well.append(disc, sheen, arm, hit);
+    root.append(well, readout);
+
+    const audio = content.querySelector('audio');
+    wireExclusive(root, content, hit, label, () => audio ?? null, null);
+
+    if (audio) {
+        const trackArm = () => {
+            const ratio = audio.duration ? audio.currentTime / audio.duration : 0;
+            root.style.setProperty('--arm-angle', `${-8 - Math.min(1, Math.max(0, ratio)) * 26}deg`);
+        };
+        audio.addEventListener('timeupdate', trackArm);
+        audio.addEventListener('play', () => {
+            root.classList.add('is-playing');
+            hit.setAttribute('aria-label', `Pause ${label}`);
+        });
+        audio.addEventListener('pause', () => {
+            root.classList.remove('is-playing');
+            hit.setAttribute('aria-label', `Play ${label}`);
+        });
+    }
+
+    return root;
+}
+
+function mountStage(content: HTMLElement, kind: DoorKind, label: string): HTMLElement {
+    const root = document.createElement('div');
+    root.className = `stage stage--${kind}`;
 
     const frame = document.createElement('div');
-    frame.className = 'door__frame';
+    frame.className = kind === 'video' ? 'stage__lens' : 'stage__print';
 
-    const inside = document.createElement('div');
-    inside.className = 'door__inside';
-    inside.appendChild(content);
+    const holder = document.createElement('div');
+    holder.className = 'stage__holder';
+    holder.appendChild(content);
+    frame.appendChild(holder);
 
-    const left = panel('left');
-    const right = panel('right');
+    const hit = document.createElement('button');
+    hit.type = 'button';
+    hit.className = 'stage__hit';
+    hit.setAttribute('aria-label', `Open ${label}`);
 
-    const latch = document.createElement('button');
-    latch.type = 'button';
-    latch.className = 'door__latch';
-    latch.setAttribute('aria-expanded', 'false');
-    latch.setAttribute('aria-label', `Open ${label}`);
-
-    if (light) {
-        const glow = document.createElement('div');
-        glow.className = 'door__glow';
-        frame.appendChild(glow);
+    if (kind === 'photos') {
+        const imageBox = content.querySelector('.photo-slider__image-container');
+        (imageBox ?? frame).appendChild(hit);
+    } else {
+        frame.appendChild(hit);
     }
-    frame.append(inside, left, right, latch);
-    stage.appendChild(frame);
-    root.appendChild(stage);
 
+    root.appendChild(frame);
+
+    const video = content.querySelector('video');
+    if (video) {
+        video.controls = false;
+        video.playsInline = true;
+        video.preload = 'metadata';
+        video.addEventListener('loadeddata', () => {
+            if (video.currentTime < 0.05) video.currentTime = 0.1;
+        });
+    }
+
+    wireExclusive(root, content, hit, label, () => null, {
+        frame,
+        onShow: () => {
+            if (video) video.controls = true;
+        },
+        onHide: () => {
+            if (video) video.controls = false;
+        },
+    });
+
+    return root;
+}
+
+interface PopupHooks {
+    frame: HTMLElement;
+    onShow: () => void;
+    onHide: () => void;
+}
+
+function wireExclusive(
+    root: HTMLElement,
+    content: HTMLElement,
+    hit: HTMLButtonElement,
+    label: string,
+    audioOf: () => HTMLAudioElement | null,
+    popupHooks: PopupHooks | null
+): void {
     let generation = 0;
     let popup: { overlay: HTMLElement; zoom: HTMLElement } | null = null;
+    const home = content.parentElement;
 
     function applyOpen(open: boolean): void {
         if (open === root.classList.contains('is-open')) return;
         root.classList.toggle('is-open', open);
-        latch.setAttribute('aria-expanded', open ? 'true' : 'false');
-        latch.setAttribute('aria-label', `${open ? 'Close' : 'Open'} ${label}`);
+        hit.setAttribute('aria-expanded', open ? 'true' : 'false');
         content.dispatchEvent(new CustomEvent('door-toggle', { detail: { open } }));
         if (open) {
             [...openDoors].forEach((other) => {
-                if (other !== root) {
-                    other.dispatchEvent(new CustomEvent('door-request-close'));
-                }
+                if (other !== root) other.dispatchEvent(new CustomEvent('door-request-close'));
             });
             openDoors.add(root);
         } else {
@@ -106,8 +192,12 @@ export function Door({ content, kind, label, light = true }: DoorProps): HTMLEle
         }
     }
 
-    function zoomFromDoor(zoom: HTMLElement): string {
-        const origin = frame.getBoundingClientRect();
+    function originRect(): DOMRect {
+        return (popupHooks?.frame ?? root).getBoundingClientRect();
+    }
+
+    function zoomFromOrigin(zoom: HTMLElement): string {
+        const origin = originRect();
         const final = zoom.getBoundingClientRect();
         const scale = Math.min(
             final.width ? origin.width / final.width : 1,
@@ -119,7 +209,7 @@ export function Door({ content, kind, label, light = true }: DoorProps): HTMLEle
     }
 
     function showPopup(): void {
-        if (popup || !root.classList.contains('is-open')) return;
+        if (!popupHooks || popup || !root.classList.contains('is-open')) return;
 
         const overlay = document.createElement('div');
         overlay.className = 'media-popup';
@@ -149,6 +239,7 @@ export function Door({ content, kind, label, light = true }: DoorProps): HTMLEle
         const body = document.createElement('div');
         body.className = 'media-popup__body';
         body.appendChild(content);
+        popupHooks.onShow();
 
         bar.append(title, dismiss);
         zoom.append(bar, body);
@@ -158,7 +249,7 @@ export function Door({ content, kind, label, light = true }: DoorProps): HTMLEle
         document.documentElement.classList.add('has-media-popup');
         popup = { overlay, zoom };
 
-        const parked = zoomFromDoor(zoom);
+        const parked = zoomFromOrigin(zoom);
         zoom.style.transition = 'none';
         zoom.style.transform = parked;
         void zoom.offsetWidth;
@@ -170,12 +261,16 @@ export function Door({ content, kind, label, light = true }: DoorProps): HTMLEle
                 if (!popup || popup.zoom !== zoom) return;
                 overlay.classList.add('is-shown');
                 zoom.style.transform = 'translate(0px, 0px) scale(1)';
+                dismiss.focus();
             });
         });
 
         dismiss.addEventListener('click', (event) => {
             event.stopPropagation();
             setOpen(false);
+        });
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) setOpen(false);
         });
         document.addEventListener('keydown', onPopupKey);
     }
@@ -187,7 +282,7 @@ export function Door({ content, kind, label, light = true }: DoorProps): HTMLEle
     }
 
     function dismissPopup(done: () => void): void {
-        if (!popup) {
+        if (!popup || !popupHooks) {
             done();
             return;
         }
@@ -195,21 +290,23 @@ export function Door({ content, kind, label, light = true }: DoorProps): HTMLEle
         popup = null;
         document.removeEventListener('keydown', onPopupKey);
         overlay.classList.remove('is-shown');
-        zoom.style.transform = zoomFromDoor(zoom);
+        zoom.style.transform = zoomFromOrigin(zoom);
 
         let settled = false;
         const finish = () => {
             if (settled) return;
             settled = true;
-            inside.appendChild(content);
+            popupHooks.onHide();
+            (home ?? popupHooks.frame).appendChild(content);
             overlay.remove();
             document.documentElement.classList.remove('has-media-popup');
+            hit.focus();
             done();
         };
         zoom.addEventListener('transitionend', (event) => {
             if (event.propertyName === 'transform') finish();
         });
-        window.setTimeout(finish, 1100);
+        window.setTimeout(finish, reduceMotion() ? 0 : 1100);
     }
 
     function setOpen(open: boolean): void {
@@ -217,11 +314,8 @@ export function Door({ content, kind, label, light = true }: DoorProps): HTMLEle
         if (open) {
             if (root.classList.contains('is-open')) return;
             applyOpen(true);
-            if (popsOut(kind)) {
-                window.setTimeout(() => {
-                    if (ticket !== generation) return;
-                    showPopup();
-                }, 120);
+            if (popupHooks && popsOut(root.classList.contains('stage--video') ? 'video' : 'photos')) {
+                showPopup();
             }
             return;
         }
@@ -235,37 +329,23 @@ export function Door({ content, kind, label, light = true }: DoorProps): HTMLEle
         applyOpen(false);
     }
 
-    function isControl(target: EventTarget | null): boolean {
-        return target instanceof Element && !!target.closest(
-            'a, button, video, audio, input, .song-player__progress-container, .photo-slider__controls'
-        );
-    }
-
-    function closeFromDoor(event: Event): void {
-        if (!root.classList.contains('is-open') || popup) return;
-        if (isControl(event.target)) return;
+    hit.addEventListener('click', (event) => {
         event.stopPropagation();
-        setOpen(false);
-    }
+        if (popup) return;
+        const audio = audioOf();
+        if (audio && !audio.paused) {
+            setOpen(false);
+            return;
+        }
+        if (!root.classList.contains('is-open')) {
+            setOpen(true);
+            return;
+        }
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().catch(() => undefined);
+        }
+    });
 
     root.addEventListener('door-request-close', () => setOpen(false));
-
-    latch.addEventListener('click', (event) => {
-        event.stopPropagation();
-        setOpen(!root.classList.contains('is-open'));
-    });
-
-    left.addEventListener('click', closeFromDoor);
-    right.addEventListener('click', closeFromDoor);
-    inside.addEventListener('click', closeFromDoor);
-
-    document.addEventListener('click', (event) => {
-        if (!root.classList.contains('is-open') || popup) return;
-        const target = event.target;
-        if (!(target instanceof Node)) return;
-        if (root.contains(target)) return;
-        setOpen(false);
-    });
-
-    return root;
 }

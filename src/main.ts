@@ -8,10 +8,10 @@ import './style.css';
 type PageType = 'music' | 'photography' | 'writing' | 'contacts';
 
 const pages: { id: PageType; label: string; hint: string }[] = [
-    { id: 'music', label: 'Music', hint: 'A Collection of Original Compositions' },
-    { id: 'photography', label: 'Photography', hint: 'Visual Stories Through the Lens' },
-    { id: 'writing', label: 'Writing', hint: 'Articles, Essays, and Stories' },
-    { id: 'contacts', label: 'Contacts', hint: 'Get in Touch' },
+    { id: 'music', label: 'Music', hint: 'Scores' },
+    { id: 'photography', label: 'Photography', hint: 'Frames' },
+    { id: 'writing', label: 'Writing', hint: 'Essays' },
+    { id: 'contacts', label: 'Contacts', hint: 'In touch' },
 ];
 
 let currentPage: PageType = 'music';
@@ -23,12 +23,13 @@ function renderNavigation(): void {
 
     navContainer.innerHTML = '';
 
-    pages.forEach((page) => {
+    pages.forEach((page, index) => {
         const button = Button({
             label: page.label,
+            index: String(index + 1).padStart(2, '0'),
             hint: page.hint,
             isActive: currentPage === page.id,
-            flame: page.id === 'contacts',
+            cue: page.id === 'contacts',
             hintDismissed: dismissedHint === page.id,
             onClick: () => {
                 dismissedHint = page.id;

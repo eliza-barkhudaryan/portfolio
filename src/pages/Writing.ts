@@ -1,5 +1,4 @@
 import { storageUrl } from '../storage';
-import { WorkCard } from '../components/WorkCard';
 import { LinkPlaceholder } from '../components/LinkPlaceholder';
 import type { WritingItem } from '../types';
 
@@ -10,28 +9,37 @@ export async function renderWritingPage(container: HTMLElement): Promise<void> {
 
     container.innerHTML = '';
 
-    const grid = document.createElement('div');
-    grid.className = 'work-grid work-grid--scroll';
+    const index = document.createElement('div');
+    index.className = 'essay-index';
 
     items.forEach((item) => {
-      const linkPlaceholder = LinkPlaceholder({
-        url: item.url,
-        label: item.linkLabel,
-      });
+      const essay = document.createElement('article');
+      essay.className = 'essay';
 
-      const card = WorkCard({
-        name: item.name,
-        description: item.description,
-        mediaElement: linkPlaceholder,
-      });
+      const title = document.createElement('h3');
+      title.className = 'essay__title';
+      title.textContent = item.name;
 
-      grid.appendChild(card);
+      const description = document.createElement('p');
+      description.className = 'essay__description';
+      description.textContent = item.description;
+
+      essay.appendChild(title);
+      essay.appendChild(description);
+      essay.appendChild(
+        LinkPlaceholder({
+          url: item.url,
+          label: item.linkLabel,
+          name: item.name,
+        })
+      );
+
+      index.appendChild(essay);
     });
 
-    container.appendChild(grid);
+    container.appendChild(index);
   } catch (error) {
     container.innerHTML = '<p class="error">Unable to load writing collection.</p>';
     console.error('Failed to load writing data:', error);
   }
 }
-

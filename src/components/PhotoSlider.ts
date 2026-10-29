@@ -104,7 +104,7 @@ export function PhotoSlider({ photos, seriesTitle }: PhotoSliderProps): HTMLElem
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
     if (event.altKey || event.ctrlKey || event.metaKey) return;
-    const showing = container.closest('.media-popup, .door.is-open');
+    const showing = container.closest('.media-popup, .stage.is-open');
     if (!showing || photos.length <= 1) return;
     event.preventDefault();
     step(event.key === 'ArrowRight' ? 1 : -1);
